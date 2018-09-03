@@ -1,0 +1,5 @@
+bat.png
+right
+17 21
+15 0
+3 walk

@@ -1,0 +1,5 @@
+slime.png
+right
+25 13
+2 0
+3 walk

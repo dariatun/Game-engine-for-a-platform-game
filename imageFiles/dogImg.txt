@@ -1,0 +1,10 @@
+dogs.png
+left
+72 48
+18 10
+4 bark
+6 slow_walk
+5 walk
+4 sit
+3 sit_down
+4 stand
