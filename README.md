@@ -1,6 +1,12 @@
 # Game engine
 Game engine for a platform game in Java. Equipped with a GUI.
 
+DESCRIPTION:
+Platformer game, where you play as a dog. You can jump, move, attack enemies by barking at them and dig the floor (the digging works only on specific floor tiles). There are lots of items around the level, that you can put in your inventory and use later. The goal for each level is to find a key and open the door with it. 
+
+
+
+
 Images created by
 
 Background image / cave.png / by PWL
