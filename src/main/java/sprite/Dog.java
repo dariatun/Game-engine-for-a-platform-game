@@ -11,6 +11,7 @@ import managers.Inventory;
 import sprite.floor.FloorLine;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,6 +62,7 @@ public class Dog extends LivingSprite {
         try {
             File file = new File(level + "dog.txt");
             Scanner sc = new Scanner(file);
+            sc.useLocale(Locale.ENGLISH);
             if (sc.hasNext()) {
                 initPoint = new Point2D(sc.nextDouble(), sc.nextDouble());
             }
@@ -369,11 +371,12 @@ public class Dog extends LivingSprite {
             standing = true;
         }
     }
-    
+
     public void changeLevel(int level) {
         try {
             File file = new File("level_" + String.valueOf(level) + "/dog.txt");
             Scanner sc = new Scanner(file);
+            sc.useLocale(Locale.ENGLISH);
             initPoint = new Point2D(sc.nextDouble(), sc.nextDouble());
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Dog.class.getName()).log(Level.SEVERE, null, ex);

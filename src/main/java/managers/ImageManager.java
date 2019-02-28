@@ -9,6 +9,7 @@ import static main.Utils.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -21,6 +22,7 @@ import javafx.scene.image.WritableImage;
  * @author dariatunina
  */
 public class ImageManager {
+
     private final Map<String, Image[]> imgsLines;
     private Image wholeImg;
     private int width;
@@ -39,6 +41,7 @@ public class ImageManager {
     private void analizeFile() {
         try {
             Scanner sc = new Scanner(file);
+            sc.useLocale(Locale.ENGLISH);
             String imgName = sc.next();
             wholeImg = new Image(GFX_DIR + imgName);
             facing = sc.next();
@@ -79,7 +82,7 @@ public class ImageManager {
         }
         return ret;
     }
-    
+
     public Map getImgsLine() {
         return imgsLines;
     }

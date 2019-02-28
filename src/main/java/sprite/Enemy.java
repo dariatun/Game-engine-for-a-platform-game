@@ -5,8 +5,8 @@
  */
 package sprite;
 
-import main.GameVariables;
-import static main.GameVariables.PAUSE;
+import main.Variables;
+import static main.Variables.PAUSE;
 import static main.Utils.*;
 import ids.EnemyId;
 import ids.SpriteId;
@@ -235,10 +235,10 @@ public class Enemy extends LivingSprite {
      * @param gameVariables variables that can help indicate stage that game in
      */
     public void drawAttentionIcon(GraphicsContext gc,
-            Map<GameVariables, Integer> gameVariables) {
+            Map<Variables, Boolean> gameVariables) {
         gc.drawImage(ATTENTION_IMG, this.getCenterX(),
                 this.getY() - 20, 15, 15);
-        if (gameVariables.get(PAUSE) == 0) {
+        if (!gameVariables.get(PAUSE)) {
             Thread th = new Thread(new AttentionRunnable(gameVariables, this));
             th.start();
         }

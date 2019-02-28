@@ -5,19 +5,12 @@
  */
 package main;
 
-import managers.SaveFileManager;
-import managers.ItemsManager;
-import managers.EnemyManager;
-import managers.Floor;
-import managers.ElementManager;
-import ids.ElementId;
-import ids.EnemyId;
-import ids.SpriteId;
-import ids.ItemId;
+import game.*;
+import managers.*;
+import ids.*;
 import static main.Utils.*;
 import sprite.Dog;
 import java.util.HashMap;
-import java.util.Map;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -42,6 +35,8 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import lvlCreator.*;
+import static main.Variables.*;
 
 /**
  *
@@ -54,8 +49,11 @@ public class MainApp extends Application {
     private ItemsManager itemManager;
     private ElementManager elementManager;
     private GameCanvas gameCanvas;
-    private UserActionHandler userActionHandler;
-    private Map<GameVariables, Integer> gameVariables;
+    private LvlCreatorCanvas lvlCreatorCanvas;
+    private MainLoopHandler mainLoopHandler;
+    private LvlCreatorLoopHandler lvlCreatorLoopHandler;
+    private UserActionHandlerInGame userActionHandler;
+    private HashMap<Variables, Boolean> mainVariables;
     private SaveFileManager fileMan;
     private Floor floor;
     private Dog dog;
@@ -67,27 +65,33 @@ public class MainApp extends Application {
         enemyManager = new EnemyManager(EnemyId.class, "enemies.txt");
         itemManager = new ItemsManager(ItemId.class, "items.txt");
         elementManager = new ElementManager(ElementId.class, "elements.txt");
-        gameVariables = new HashMap<>();
+        mainVariables = new HashMap<>();
+        mainVariables.put(LVL_CREATOR, false);
         floor = new Floor(STONES_IMG, LEVEL_DIR);
         fileMan = new SaveFileManager();
-        gameCanvas = new GameCanvas(enemyManager, gameVariables, floor, dog,
+        gameCanvas = new GameCanvas(enemyManager, mainVariables, floor, dog,
                 itemManager, elementManager);
         gameLoopHandler = new GameLoopHandler(gameCanvas, enemyManager,
-                gameVariables, floor, dog, itemManager, elementManager, fileMan);
-        userActionHandler = new UserActionHandler(gameVariables, dog);
+                mainVariables, floor, dog, itemManager, elementManager, fileMan);
+        lvlCreatorCanvas = new LvlCreatorCanvas();
+        lvlCreatorLoopHandler = new LvlCreatorLoopHandler(lvlCreatorCanvas);
+        mainLoopHandler = new MainLoopHandler(
+                mainVariables, gameLoopHandler, lvlCreatorLoopHandler);
+        userActionHandler = new UserActionHandlerInGame(mainVariables, dog);
     }
 
     @Override
     public void start(Stage stage) {
         BorderPane startPane = new BorderPane();
-        StackPane mainPane = createMainPane(stage, startPane);
+        StackPane mainPane = createPane(stage, startPane, gameCanvas);
+        StackPane lvlCreatorPane = createPane(stage, startPane, lvlCreatorCanvas);
         setBackground(mainPane, startPane);
-        setStartPane(startPane, mainPane, stage);
-        
+        setStartPane(startPane, mainPane, lvlCreatorPane, stage);
+
         Scene scene = createScene(stage, startPane);
         final KeyFrame oneFrame = new KeyFrame(
-                Duration.millis(1000 / 40), 
-                gameLoopHandler
+                Duration.millis(1000 / 40),
+                mainLoopHandler
         );
         final Timeline tl = new Timeline(oneFrame);
         tl.setCycleCount(Animation.INDEFINITE);
@@ -95,24 +99,37 @@ public class MainApp extends Application {
 
         stage.show();
     }
-    
-    private VBox createMiddlePane(StackPane mainPane, Stage stage) {
+
+    private StackPane createPane(Stage stage,
+            BorderPane startPane, MainCanvas canvas) {
+        StackPane pane = new StackPane();
+        Button exitBtn = createExitButton(stage, startPane);
+        pane.getChildren().addAll(canvas, exitBtn);
+        canvas.fixAspectRatio();
+        return pane;
+    }
+
+    private VBox createMiddlePane(StackPane mainPane,
+            StackPane lvlCreatorPane, Stage stage) {
         Button startButton = createStartButton(stage, mainPane);
         Button continueButton = createContinueButton(stage, mainPane);
+       // Button lvlCreatorButton = createLvlCreatorButton(stage, lvlCreatorPane);
         VBox middlePane = new VBox(15);
         middlePane.setAlignment(Pos.CENTER);
-        middlePane.getChildren().addAll(startButton, continueButton);
+        middlePane.getChildren().addAll(
+                startButton, continueButton);
         return middlePane;
     }
 
-    private void setStartPane(BorderPane pane, StackPane mainPane, Stage stage) {
-        VBox middlePane = createMiddlePane(mainPane, stage);
+    private void setStartPane(BorderPane pane, StackPane mainPane,
+            StackPane lvlCreatorPane, Stage stage) {
+        VBox middlePane = createMiddlePane(mainPane, lvlCreatorPane, stage);
         Text downText = createDownText();
         pane.setCenter(middlePane);
         pane.setBottom(downText);
         BorderPane.setAlignment(downText, Pos.BOTTOM_CENTER);
     }
-    
+
     private Text createDownText() {
         Text text = new Text("By Daria Tunina");
         text.setFont(FONT);
@@ -130,48 +147,54 @@ public class MainApp extends Application {
         return scene;
     }
 
-    private Button createStartButton(Stage stage, StackPane mainPane) {
-        Button startButton = new Button();
-        setButton(startButton, START_BUTTON_IMG);
-        startButton.setOnAction(e -> {
-            fileMan.deleteMainFile();
-            stage.getScene().setRoot(mainPane);
-            gameLoopHandler.setInitSprites();
-            gameVariables.put(GameVariables.GAME_STARTED, 1);
+    private Button createLvlCreatorButton(Stage stage, StackPane pane) {
+        Button button = new Button();
+        setButton(button, START_BUTTON_IMG);
+        button.setOnAction(e -> {
+            stage.getScene().setRoot(pane);
+            mainVariables.put(LVL_CREATOR, true);
         });
-        return startButton;
+        return button;
     }
 
-    private Button createContinueButton(Stage stage, StackPane mainPane) {
-        Button continueButton = new Button();
-        setButton(continueButton, CONT_BUTTON_IMG);
-        continueButton.setOnAction(e -> {
+    private Button createStartButton(Stage stage, StackPane pane) {
+        Button button = new Button();
+        setButton(button, START_BUTTON_IMG);
+        button.setOnAction(e -> {
+            fileMan.deleteMainFile();
+            stage.getScene().setRoot(pane);
+            gameLoopHandler.setInitSprites();
+            mainVariables.put(Variables.GAME_STARTED, true);
+        });
+        return button;
+    }
+
+    private Button createContinueButton(Stage stage, StackPane pane) {
+        Button button = new Button();
+        setButton(button, CONT_BUTTON_IMG);
+        button.setOnAction(e -> {
             if (fileMan.currFileExist()) {
                 gameLoopHandler.setInitSprites();
                 fileMan.setCurrFile("main");
-                gameVariables.put(GameVariables.GAME_STARTED, 1);
-                stage.getScene().setRoot(mainPane);
+                mainVariables.put(Variables.GAME_STARTED, true);
+                stage.getScene().setRoot(pane);
             }
         });
-        return continueButton;
-    }
-
-    private StackPane createMainPane(Stage stage, BorderPane startPane) {
-        StackPane pane = new StackPane();
-        Button exitBtn = createExitButton(stage, startPane);
-        pane.getChildren().addAll(gameCanvas, exitBtn);
-        gameCanvas.fixAspectRatio();
-        return pane;
+        return button;
     }
 
     private Button createExitButton(Stage stage, BorderPane startPane) {
         Button button = new Button();
         setExitButton(button);
         button.setOnMouseClicked(e -> {
-            fileMan.setCurrFile("temporary");
-            gameLoopHandler.save_positions(dog.getCurrPos());
-            gameVariables.put(GameVariables.GAME_STARTED, 0);
-            stage.getScene().setRoot(startPane);
+            if (mainVariables.get(LVL_CREATOR)) {
+                
+            } else {
+                fileMan.setCurrFile("temporary");
+                gameLoopHandler.save_positions(dog.getCurrPos());
+                mainVariables.put(Variables.GAME_STARTED, false);
+                stage.getScene().setRoot(startPane);
+            }
         });
         return button;
     }

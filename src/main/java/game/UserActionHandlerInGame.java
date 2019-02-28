@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package main;
+package game;
 
-import static main.GameVariables.*;
+import main.Variables;
+import static main.Variables.*;
 import sprite.Dog;
 import java.util.Map;
 import javafx.event.EventHandler;
@@ -16,9 +17,9 @@ import javafx.scene.input.KeyEvent;
  *
  * @author dariatunina
  */
-public class UserActionHandler implements EventHandler<KeyEvent> {
+public class UserActionHandlerInGame implements EventHandler<KeyEvent> {
 
-    private final Map<GameVariables, Integer> gameVariables;
+    private final Map<Variables, Boolean> gameVariables;
     private final Dog dog;
 
     /**
@@ -27,14 +28,14 @@ public class UserActionHandler implements EventHandler<KeyEvent> {
      * @param gameVariables variables that can help indicate stage that game in
      * @param dog the main character of the game
      */
-    public UserActionHandler(
+    public UserActionHandlerInGame(
             Map gameVariables, Dog dog) {
         this.gameVariables = gameVariables;
         this.dog = dog;
     }
 
     private void left_key_managing() {
-        if (gameVariables.get(INVENTORY) == 1) {
+        if (gameVariables.get(INVENTORY)) {
             dog.getInventory().changeCurrX(-1);
         } else {
             dog.moveLeft();
@@ -42,7 +43,7 @@ public class UserActionHandler implements EventHandler<KeyEvent> {
     }
 
     private void right_key_managing() {
-        if (gameVariables.get(INVENTORY) == 1) {
+        if (gameVariables.get(INVENTORY)) {
             dog.getInventory().changeCurrX(1);
         } else {
             dog.moveRight();
@@ -59,29 +60,29 @@ public class UserActionHandler implements EventHandler<KeyEvent> {
     }
 
     private void enter_managing() {
-        gameVariables.put(FIRST_ATTEMPT, 0);
-        if (gameVariables.get(GAME_OVER) == 0) {
-            gameVariables.put(PLAYING, 1);
+        gameVariables.put(FIRST_ATTEMPT, false);
+        if (!gameVariables.get(GAME_OVER)) {
+            gameVariables.put(PLAYING, true);
         } else {
-            gameVariables.put(GAME_OVER, 0);
+            gameVariables.put(GAME_OVER, false);
         }
-        gameVariables.put(STATIONARY_SCREEN, 0);
+        gameVariables.put(STATIONARY_SCREEN, false);
     }
 
     private void inventory_managing() {
-        if (gameVariables.get(INVENTORY) == 1) {
-            gameVariables.put(INVENTORY, 0);
+        if (gameVariables.get(INVENTORY)) {
+            gameVariables.put(INVENTORY, false);
             dog.getInventory().reset();
         } else {
-            gameVariables.put(INVENTORY, 1);
+            gameVariables.put(INVENTORY, true);
         }
     }
 
     @Override
     public void handle(KeyEvent event) {
         if (event.getEventType() == KeyEvent.KEY_PRESSED
-                && gameVariables.get(GAME_STARTED) == 1) {
-            if (gameVariables.get(PLAYING) == 1) {
+                && gameVariables.get(GAME_STARTED)) {
+            if (gameVariables.get(PLAYING)) {
                 if (event.getCode() == KeyCode.LEFT) {
                     left_key_managing();
                 }
@@ -110,7 +111,7 @@ public class UserActionHandler implements EventHandler<KeyEvent> {
             }
         } else {
             if (event.getEventType() == KeyEvent.KEY_RELEASED) {
-                if (gameVariables.get(PLAYING) == 1) {
+                if (gameVariables.get(PLAYING)) {
                     dog.stop();
                 }
             }

@@ -5,9 +5,9 @@
  */
 package runnable;
 
-import main.GameCanvas;
-import main.GameVariables;
-import static main.GameVariables.*;
+import game.GameCanvas;
+import main.Variables;
+import static main.Variables.*;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  */
 public class TextRunnable implements Runnable {
 
-    private final Map<GameVariables, Integer> gameVariables;
+    private final Map<Variables, Boolean> gameVariables;
     private final GameCanvas gc;
 
     /**
@@ -27,7 +27,7 @@ public class TextRunnable implements Runnable {
      * @param gameVariables variables that can help indicate stage that game in
      * @param gc canvas of main stage of the game
      */
-    public TextRunnable(Map<GameVariables, Integer> gameVariables,
+    public TextRunnable(Map<Variables, Boolean> gameVariables,
             GameCanvas gc) {
         this.gameVariables = gameVariables;
         this.gc = gc;
@@ -36,14 +36,14 @@ public class TextRunnable implements Runnable {
     @Override
     public void run() {
         try {
-            gameVariables.put(PAUSE, 1);
-            int sleepTime = gameVariables.get(INVENTORY) == 1 ? 700 : 1000;
+            gameVariables.put(PAUSE, true);
+            int sleepTime = gameVariables.get(INVENTORY) ? 700 : 1000;
             Thread.sleep(sleepTime);
-            gameVariables.put(TEXT_MESSAGE, 0);
-            if (gameVariables.get(INVENTORY) == 1) {
+            gameVariables.put(TEXT_MESSAGE, false);
+            if (gameVariables.get(INVENTORY)) {
                 gc.clearTextMessage();
             }
-            gameVariables.put(PAUSE, 0);
+            gameVariables.put(PAUSE, false);
         } catch (InterruptedException ex) {
             Logger.getLogger(TextRunnable.class.getName()).log(Level.SEVERE, null, ex);
         }

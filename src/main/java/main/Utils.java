@@ -9,7 +9,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 
 /**
  *
@@ -29,25 +28,25 @@ public class Utils {
 
     // images
     public static final String GFX_DIR = "/gfx/";
-    static final String LEVEL_DIR = "level_1/";
-    static final String IMAGE_DIR = "imageFiles/";
-    static final int NUM_OF_LEVELS = 2;
+    public static final String LEVEL_DIR = "level_1/";
+    public static final String IMAGE_DIR = "imageFiles/";
+    public static final int NUM_OF_LEVELS = 2;
 
-    static final String BACKGROUND_IMG = "cave.png";
+    public static final String BACKGROUND_IMG = "cave.png";
 
-    static final Image FIREWORKS_1 = new Image(GFX_DIR + "firework1.png");
-    static final Image FIREWORKS_2 = new Image(GFX_DIR + "firework2.png");
+    public static final Image FIREWORKS_1 = new Image(GFX_DIR + "firework1.png");
+    public static final Image FIREWORKS_2 = new Image(GFX_DIR + "firework2.png");
 
-    static final Image DIALOGBOX_IMG = new Image(GFX_DIR + "whiteDB.png");
+    public static final Image DIALOGBOX_IMG = new Image(GFX_DIR + "whiteDB.png");
 
     public static final String LIST_OF_IMG = "imgFiles.txt";
     
     //buttons
-    static final String START_BUTTON_IMG = "startButton.png";
-    static final String CREDITS_BUTTON_IMG = "creditsButton.png";
-    static final String BACK_BUTTON_IMG = "backButton.png";
-    static final String CONT_BUTTON_IMG = "continue.png";
-    static final String EXIT_IMG = "exit.png";
+    public static final String START_BUTTON_IMG = "startButton.png";
+    public static final String CREDITS_BUTTON_IMG = "creditsButton.png";
+    public static final String BACK_BUTTON_IMG = "backButton.png";
+    public static final String CONT_BUTTON_IMG = "continue.png";
+    public static final String EXIT_IMG = "exit.png";
 
     //life bars
     /**
@@ -101,10 +100,10 @@ public class Utils {
      */
     public static final Image ATTACK = new Image(GFX_DIR + "waves.png");
 
-    static final String DOG_IMG = IMAGE_DIR + "dogImg.txt";
+    public static final String DOG_IMG = IMAGE_DIR + "dogImg.txt";
 
-    static final double DOG_WIDTH = 36;
-    static final double DOG_HEIGHT = 24;
+    public static final double DOG_WIDTH = 36;
+    public static final double DOG_HEIGHT = 24;
 
     public static final int DOG_STANDING_LINE = 5;
     public static final int DOG_WALKING_LINE = 2;
@@ -126,7 +125,7 @@ public class Utils {
      */
     public static final double MOVE_SPEED = 5;
 
-    static final double DOG_FORCE = 0.4;
+    public static final double DOG_FORCE = 0.4;
 
     /**
      * The range of dog's attack on x coordinates
@@ -204,14 +203,14 @@ public class Utils {
     public static final double[] CONTR_TERR_HEIGHT = {140, 0.0005};
 
     //items
-    static final Image KEY_IMG = new Image(GFX_DIR + "key.png");
-    static final Image BONE_IMG = new Image(GFX_DIR + "bone.png");
-    static final Image FOOD_IMG = new Image(GFX_DIR + "food.png");
-    static final WritableImage APPLE_IMG
+    public static final Image KEY_IMG = new Image(GFX_DIR + "key.png");
+    public static final Image BONE_IMG = new Image(GFX_DIR + "bone.png");
+    public static final Image FOOD_IMG = new Image(GFX_DIR + "food.png");
+    public static final WritableImage APPLE_IMG
             = new WritableImage(FOOD_IMG.getPixelReader(), 1, 0, 14, 16);
-    static final WritableImage PIZZA_IMG
+    public static final WritableImage PIZZA_IMG
             = new WritableImage(FOOD_IMG.getPixelReader(), 32, 0, 16, 16);
-    static final WritableImage ICE_CREAM_IMG
+    public static final WritableImage ICE_CREAM_IMG
             = new WritableImage(FOOD_IMG.getPixelReader(), 51, 0, 12, 16);
 
     /**
@@ -274,7 +273,7 @@ public class Utils {
      * The specific image for the door
      */
     public static final Image DOOR_IMG = new Image(GFX_DIR + "doorAnim.png");
-    static final Image SAVE_POINT_IMG = new Image(GFX_DIR + "savePoint.png");
+    public static final Image SAVE_POINT_IMG = new Image(GFX_DIR + "savePoint.png");
 
     /**
      * The images of all possible kinds of elements
@@ -302,7 +301,7 @@ public class Utils {
     public static final String SAVE_POINT_FUNC = "SAVE";
 
     //text and font
-    static final String RULES = "INSTRUCTIONS\n"
+    public static final String RULES = "INSTRUCTIONS\n"
             + "[Left, right arrows] - Move\n"
             + "[SPACE] - Jump\n"
             + "[I] - Open inventory\n"
@@ -310,9 +309,9 @@ public class Utils {
             + "[Z] - Use\n"
             + "[C] - Dig\n"
             + "[ENTER] - Begin game";
-    static final String GAME_OVER_TEXT = "GAME OVER\n"
+    public static final String GAME_OVER_TEXT = "GAME OVER\n"
             + "Press [ENTER] to restart\n";
-    static final String START_TEXT = "Press enter to start the game";
+    public static final String START_TEXT = "Press enter to start the game";
 
     /**
      * The messages that pops up, when item that increases health have been used
@@ -329,12 +328,12 @@ public class Utils {
         "THERE IS NOTHING HERE",
         "YOU CAN'T USE EMPTINESS"
     };
-    static final String END_MESSAGE = "CONGRATULATIONS! YOU WON!\n"
+    public static final String END_MESSAGE = "CONGRATULATIONS! YOU WON!\n"
             + "Start again by pressing [ENTER]";
-    static final String END_LVL_MESSAGE = "CONGRATULATIONS!\n"
+    public static final String END_LVL_MESSAGE = "CONGRATULATIONS!\n"
             + "YOU COMPLETE THIS LEVEL!\n"
             + "Start next one by pressing [ENTER]";
-    static final Font FONT = Font.font(
+    public static final Font FONT = Font.font(
             "Baskerville", FontPosture.REGULAR, 30);
     
 }

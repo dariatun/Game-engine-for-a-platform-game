@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package main;
+package game;
 
+import main.Variables;
 import sprite.Enemy;
 import sprite.Dog;
 import sprite.Item;
@@ -17,7 +18,7 @@ import managers.Floor;
 import managers.ElementManager;
 import managers.Inventory;
 import ids.ElementId;
-import static main.GameVariables.*;
+import static main.Variables.*;
 import static main.Utils.*;
 import static ids.SpriteId.DOG;
 import runnable.AdjustingRunnable;
@@ -32,20 +33,18 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 
 /**
  *
  * @author dariatunina
  */
-public class GameLoopHandler implements EventHandler {
+public class GameLoopHandler {
 
     private final GameCanvas gameCanvas;
     private final EnemyManager enemyManager;
     private final Floor floor;
-    private final Map<GameVariables, Integer> gameVariables;
+    private final Map<Variables, Boolean> gameVariables;
     private final Dog dog;
     private final ItemsManager itemManager;
     private final ElementManager elementManager;
@@ -73,7 +72,7 @@ public class GameLoopHandler implements EventHandler {
      */
     public GameLoopHandler(GameCanvas gameCanvas,
             EnemyManager enemyManager,
-            Map<GameVariables, Integer> gameVariables,
+            Map<Variables, Boolean> gameVariables,
             Floor floor, Dog dog,
             ItemsManager itemManager,
             ElementManager elementManager, SaveFileManager fileManager) {
@@ -86,10 +85,10 @@ public class GameLoopHandler implements EventHandler {
         this.elementManager = elementManager;
         this.fileManager = fileManager;
         setGameVarToInit();
-        gameVariables.put(PLAYING, 0);
-        gameVariables.put(FIRST_ATTEMPT, 1);
-        gameVariables.put(STATIONARY_SCREEN, 0);
-        gameVariables.put(GAME_STARTED, 0);
+        gameVariables.put(PLAYING, false);
+        gameVariables.put(FIRST_ATTEMPT, true);
+        gameVariables.put(STATIONARY_SCREEN, false);
+        gameVariables.put(GAME_STARTED, false);
         file = fileManager.getFile();
         startTime = System.currentTimeMillis();
         elapsedTime = 0L;
@@ -105,7 +104,7 @@ public class GameLoopHandler implements EventHandler {
         dog.resetToInit();
         floor.resetToInit();
         elementManager.getSprite(ElementId.DOOR).changeImg("Closed");
-        if (file.length() != 0 && gameVariables.get(DOOR_OPENED) == 0) {
+        if (file.length() != 0 && !gameVariables.get(DOOR_OPENED)) {
             spritesFromFile();
         } else {
             LOG.info("Set init parameters");
@@ -211,7 +210,7 @@ public class GameLoopHandler implements EventHandler {
         if (dog.isUsing()) {
             // Dog can use item from inventory only if..
             //..it wasn't using something not so long ago
-            if (gameVariables.get(PAUSE) == 0) {
+            if (!gameVariables.get(PAUSE)) {
                 addTextMessage(inventory.useItem(dog));
                 dog.setUsing(false);
             }
@@ -308,7 +307,7 @@ public class GameLoopHandler implements EventHandler {
     }
 
     private void addTextMessage(String msg) {
-        gameVariables.put(TEXT_MESSAGE, 1);
+        gameVariables.put(TEXT_MESSAGE, true);
         textMessage = msg;
     }
 
@@ -360,7 +359,7 @@ public class GameLoopHandler implements EventHandler {
                 } else {
                     // try to find item that can be used with this element
                     if (dog.getInventory().findItemForElement(element)) {
-                        gameVariables.put(DOOR_OPENED, 1);
+                        gameVariables.put(DOOR_OPENED, true);
                     } else {
                         /* if there isn't item that can be used with this element
                           player is told about it by pop up message */
@@ -384,7 +383,7 @@ public class GameLoopHandler implements EventHandler {
 
     private void checkEnd() {
         //Opening door means winning the level
-        if (gameVariables.get(DOOR_OPENED) == 1) {
+        if (gameVariables.get(DOOR_OPENED)) {
             //end screen pops up, if dog moves after oppening the door
             if (elementManager.getSprite(ElementId.DOOR).
                     getBounds().intersects(dog.getBounds())
@@ -409,8 +408,8 @@ public class GameLoopHandler implements EventHandler {
     }
 
     private void stopGame() {
-        gameVariables.put(GAME_OVER, 1);
-        gameVariables.put(PLAYING, 0);
+        gameVariables.put(GAME_OVER, true);
+        gameVariables.put(PLAYING, false);
         gameCanvas.gameOverScreen();
     }
 
@@ -436,12 +435,12 @@ public class GameLoopHandler implements EventHandler {
     }
 
     private void setGameVarToInit() {
-        gameVariables.put(INVENTORY, 0);
-        gameVariables.put(GAME_OVER, 0);
-        gameVariables.put(PAUSE, 0);
-        gameVariables.put(PLAYING, 1);
-        gameVariables.put(DOOR_OPENED, 0);
-        gameVariables.put(TEXT_MESSAGE, 0);
+        gameVariables.put(INVENTORY, false);
+        gameVariables.put(GAME_OVER, false);
+        gameVariables.put(PAUSE, false);
+        gameVariables.put(PLAYING, true);
+        gameVariables.put(DOOR_OPENED, false);
+        gameVariables.put(TEXT_MESSAGE, false);
     }
 
     /*
@@ -460,24 +459,24 @@ public class GameLoopHandler implements EventHandler {
     }
 
     private void updateStationaryScreen() {
-        if (gameVariables.get(GAME_OVER) == 0) {
-            if (gameVariables.get(FIRST_ATTEMPT) == 1) {
+        if (!gameVariables.get(GAME_OVER)) {
+            if (gameVariables.get(FIRST_ATTEMPT)) {
                 gameCanvas.startScreen();
             } else {
                 restart();
             }
         } else {
             //if door is open, than it's not a game over
-            if (gameVariables.get(DOOR_OPENED) == 0) {
+            if (!gameVariables.get(DOOR_OPENED)) {
                 stopGame();
             }
         }
-        gameVariables.put(STATIONARY_SCREEN, 1);
+        gameVariables.put(STATIONARY_SCREEN, true);
     }
 
     private void updateMovingScreen() {
-        gameVariables.put(STATIONARY_SCREEN, 0);
-        if (gameVariables.get(INVENTORY) == 1) {
+        gameVariables.put(STATIONARY_SCREEN, false);
+        if (gameVariables.get(INVENTORY)) {
             inventoryManipulation();
             gameCanvas.renderInventory();
         } else {
@@ -488,18 +487,17 @@ public class GameLoopHandler implements EventHandler {
             checkEnd();
         }
         //Pop up message if there is one
-        if (gameVariables.get(TEXT_MESSAGE) == 1) {
+        if (gameVariables.get(TEXT_MESSAGE)) {
             gameCanvas.renderTextMessage(textMessage);
         }
     }
 
-    @Override
-    public void handle(Event event) {
-        if (gameVariables.get(GAME_STARTED) == 1) {
-            if (gameVariables.get(PLAYING) == 1) {
+    public void handle() {
+        if (gameVariables.get(GAME_STARTED)) {
+            if (gameVariables.get(PLAYING)) {
                 updateMovingScreen();
             } else {
-                if (gameVariables.get(STATIONARY_SCREEN) == 0) {
+                if (!gameVariables.get(STATIONARY_SCREEN)) {
                     updateStationaryScreen();
                 }
             }

@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package main;
+package game;
 
+import main.Variables;
 import sprite.Enemy;
 import sprite.Dog;
 import sprite.Item;
@@ -13,27 +14,25 @@ import managers.ItemsManager;
 import managers.EnemyManager;
 import managers.Floor;
 import managers.ElementManager;
-import static main.GameVariables.*;
+import static main.Variables.*;
 import static main.Utils.*;
 import runnable.TextRunnable;
 import sprite.floor.FloorLine;
 import java.util.Map;
-import javafx.scene.Parent;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
+import main.MainCanvas;
 
 /**
  *
  * @author dariatunina
  */
-public class GameCanvas extends Canvas {
+public class GameCanvas extends MainCanvas {
 
     private final EnemyManager enemyManager;
     private final Floor floor;
-    private final Map<GameVariables, Integer> gameVariables;
+    private final Map<Variables, Boolean> gameVariables;
     private final Dog dog;
     private final ItemsManager itemManager;
     private final ElementManager elementManager;
@@ -50,7 +49,7 @@ public class GameCanvas extends Canvas {
      * @param elementManager manager that has all Element sprites
      */
     public GameCanvas(EnemyManager enemyManager,
-            Map<GameVariables, Integer> gameVariables,
+            Map<Variables, Boolean> gameVariables,
             Floor floor, Dog dog, ItemsManager itemManager,
             ElementManager elementManager) {
         this.enemyManager = enemyManager;
@@ -61,16 +60,7 @@ public class GameCanvas extends Canvas {
         this.elementManager = elementManager;
     }
 
-    /**
-     * Bind canvas size to parent Pane width and height.
-     */
-    public void fixAspectRatio() {
-        Parent parent = getParent();
-        if (parent instanceof Pane) {
-            widthProperty().bind(((Pane) getParent()).widthProperty());
-            heightProperty().bind(((Pane) getParent()).heightProperty());
-        }
-    }
+
 
     private void renderFloor(GraphicsContext gc) {
         for (FloorLine line : floor.getFloor()) {
@@ -112,12 +102,12 @@ public class GameCanvas extends Canvas {
         gc.setFill(Color.BLACK);
         gc.fillText(textMessage, APP_WIDTH / 2,
                 dog.getCenterY() < APP_HEIGHT / 2 ? APP_HEIGHT - 30 : 50);
-        if (gameVariables.get(PAUSE) == 0) {
+        if (!gameVariables.get(PAUSE)) {
             Thread th = new Thread(new TextRunnable(gameVariables, this));
             th.start();
         }
         if (textMessage.equals("OPENING THE DOOR")) {
-            gameVariables.put(DOOR_OPENED, 1);
+            gameVariables.put(DOOR_OPENED, true);
         }
     }
 
@@ -165,11 +155,6 @@ public class GameCanvas extends Canvas {
         }
     }
 
-    private void clearScreen() {
-        GraphicsContext gc = getGraphicsContext2D();
-        gc.clearRect(0, 0, APP_WIDTH, APP_HEIGHT);
-    }
-
     private void assignsTextOnScreen(String text, Color color, double height) {
         GraphicsContext gc = getGraphicsContext2D();
         gc.setFill(Color.BLACK);
@@ -204,8 +189,8 @@ public class GameCanvas extends Canvas {
      */
     public void endScreen(boolean theEnd) {
         GraphicsContext gc = getGraphicsContext2D();
-        gameVariables.put(PLAYING, 0);
-        gameVariables.put(GAME_OVER, 1);
+        gameVariables.put(PLAYING, false);
+        gameVariables.put(GAME_OVER, true);
         dog.setVisable(false);
         redraw();
         gc.drawImage(DIALOGBOX_IMG, APP_WIDTH / 6 - 5, 105,

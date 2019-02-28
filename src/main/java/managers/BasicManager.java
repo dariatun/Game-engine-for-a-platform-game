@@ -39,13 +39,14 @@ public abstract class BasicManager {
      * @param classId type of sprite
      * @param fileName specific name of the file where are the initial sprites
      */
-    public BasicManager(Class classId, String fileName)  {
+    public BasicManager(Class classId, String fileName) {
         this.fileName = fileName;
         file = new File("level_1/" + fileName);
         this.classId = classId;
         sprites = new HashMap<>();
         initPositions = new HashMap<>();
-        try (Scanner sc = new Scanner(file);){
+        try (Scanner sc = new Scanner(file);) {
+            sc.useLocale(Locale.ENGLISH);
             readFromFile(sc);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(BasicManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -130,6 +131,7 @@ public abstract class BasicManager {
 
     /**
      * Sets specific parameters for the sprite
+     *
      * @param sprite the sprite that requires additional parameters
      */
     public abstract void setAdditionalPar(Sprite sprite);
@@ -146,12 +148,12 @@ public abstract class BasicManager {
             LOG.log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void changeLevel(int level) {
         file = new File("level_" + String.valueOf(level) + "/" + fileName);
         resetToInit();
     }
-    
+
     /**
      * Put names of all existing sprites of the manager
      *

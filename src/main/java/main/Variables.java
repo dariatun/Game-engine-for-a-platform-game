@@ -9,7 +9,7 @@ package main;
  *
  * @author dariatunina
  */
-public enum GameVariables {
+public enum Variables {
     PLAYING,
     INVENTORY,
     TEXT_MESSAGE,
@@ -18,5 +18,6 @@ public enum GameVariables {
     FIRST_ATTEMPT,
     DOOR_OPENED,
     STATIONARY_SCREEN,
-    GAME_STARTED
+    GAME_STARTED,
+    LVL_CREATOR
 }

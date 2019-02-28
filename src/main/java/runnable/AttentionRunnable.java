@@ -5,8 +5,8 @@
  */
 package runnable;
 
-import main.GameVariables;
-import static main.GameVariables.PAUSE;
+import main.Variables;
+import static main.Variables.PAUSE;
 import sprite.Enemy;
 import java.util.Map;
 import java.util.logging.Level;
@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  */
 public class AttentionRunnable implements Runnable {
 
-    private final Map<GameVariables, Integer> gameVariables;
+    private final Map<Variables, Boolean> gameVariables;
     private final Enemy enemy;
 
     /**
@@ -27,7 +27,7 @@ public class AttentionRunnable implements Runnable {
      * @param gameVariables variables that can help indicate stage that game in
      * @param enemy the specific enemy
      */
-    public AttentionRunnable(Map<GameVariables, Integer> gameVariables, Enemy enemy) {
+    public AttentionRunnable(Map<Variables, Boolean> gameVariables, Enemy enemy) {
         this.gameVariables = gameVariables;
         this.enemy = enemy;
     }
@@ -35,10 +35,10 @@ public class AttentionRunnable implements Runnable {
     @Override
     public void run() {
         try {
-            gameVariables.put(PAUSE, 1);
+            gameVariables.put(PAUSE, true);
             Thread.sleep(100);
             enemy.setNoticed(false);
-            gameVariables.put(PAUSE, 0);
+            gameVariables.put(PAUSE, false);
         } catch (InterruptedException ex) {
             Logger.getLogger(TextRunnable.class.getName()).log(Level.SEVERE, null, ex);
         }
